@@ -16,22 +16,21 @@ package xyz
 
 import (
 	"fmt"
-	"path/filepath"
-
+	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
+	tfbridgev2 "github.com/pulumi/pulumi-terraform-bridge/v2/pkg/tfbridge"
 	"github.com/pulumi/pulumi-terraform-bridge/v3/pkg/tfbridge"
-	"github.com/pulumi/pulumi-terraform-bridge/v3/pkg/tfbridge/tokens"
 	shim "github.com/pulumi/pulumi-terraform-bridge/v3/pkg/tfshim"
-	shimv2 "github.com/pulumi/pulumi-terraform-bridge/v3/pkg/tfshim/sdk-v2"
 	"github.com/pulumi/pulumi-xyz/provider/pkg/version"
 	"github.com/pulumi/pulumi/sdk/v3/go/common/resource"
-	"github.com/terraform-providers/terraform-provider-xyz/xyz"
+	"github.com/terraform-providers/terraform-provider-panos/panos"
+	"path/filepath"
 )
 
 // all of the token components used below.
 const (
 	// This variable controls the default name of the package in the package
 	// registries for nodejs and python:
-	mainPkg = "xyz"
+	mainPkg = "panos"
 	// modules:
 	mainMod = "index" // the xyz module
 )
@@ -45,12 +44,12 @@ func preConfigureCallback(vars resource.PropertyMap, c shim.ResourceConfig) erro
 }
 
 // Provider returns additional overlaid schema and metadata associated with the provider..
-func Provider() tfbridge.ProviderInfo {
+func Provider() tfbridgev2.ProviderInfo {
 	// Instantiate the Terraform provider
-	p := shimv2.NewProvider(xyz.Provider())
+	p := panos.Provider().(*schema.Provider)
 
 	// Create a Pulumi provider mapping
-	prov := tfbridge.ProviderInfo{
+	prov := tfbridgev2.ProviderInfo{
 		P:    p,
 		Name: "xyz",
 		// DisplayName is a way to be able to change the casing of the provider
